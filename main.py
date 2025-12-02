@@ -1,26 +1,28 @@
-
-
 def count_power_groups(stations, lines):
-    """
-    Count how many connected groups of power stations exist.
+    # Build adjacency list
+    graph = {station: [] for station in stations}
 
-    stations: list of station name strings.
-    lines: list of (a, b) pairs, meaning there is an undirected line between a and b.
+    for a, b in lines:
+        graph[a].append(b)
+        graph[b].append(a)
 
-    Return: integer number of connected components (groups) in the network.
-    """
+    visited = set()
+    components = 0
 
-    # TODO Step 1–3: Make sure you understand "power group" and the inputs/outputs.
-    # TODO Step 4: Decide how to store neighbors (graph representation).
-    # TODO Step 5: Write pseudocode for traversing the graph and counting groups.
-    # TODO Step 6: Implement a graph traversal (DFS or BFS) to explore groups.
-    # TODO Step 7: Test on small graphs (1 node, chain, completely separate nodes).
-    # TODO Step 8: Check that your solution is roughly O(n + m).
-    pass
+    def dfs(node):
+        stack = [node]
+        while stack:
+            cur = stack.pop()
+            if cur not in visited:
+                visited.add(cur)
+                for neighbor in graph[cur]:
+                    if neighbor not in visited:
+                        stack.append(neighbor)
 
+    # Count connected components
+    for station in stations:
+        if station not in visited:
+            components += 1
+            dfs(station)
 
-if __name__ == "__main__":
-    # Optional manual test
-    stations = ["A", "B", "C", "D"]
-    lines = [("A", "B"), ("B", "C")]
-    print(count_power_groups(stations, lines))  # expected 2
+    return components
